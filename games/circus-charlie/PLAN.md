@@ -49,41 +49,39 @@ anticipar qué viene en la fila de cartas visibles.
 
 Cada prueba se puede jugar suelta o encadenada en el orden 1 → 2 → 3.
 
-## 4. Reglas base (primera propuesta)
+## 4. Reglas finales (las que implementa el PDF)
 
-**Preparación:** cada jugador tiene un peón de Charlie, 3 vidas y un mazo de
-acción propio (3 cartas: Correr, Saltar, Salto largo). Se baraja el mazo de la
-prueba y se revelan las **3 próximas cartas** (visibles = lo que viene).
+Reglamento completo en la primera página de
+[`print/circus-charlie-imprimible.pdf`](print/circus-charlie-imprimible.pdf). Resumen:
 
-**Una ronda:**
-1. Se avanza el marcador de bonus 1 punto hacia abajo.
-2. Todos eligen en secreto una carta de acción y las revelan a la vez.
-3. Se resuelve la carta de obstáculo actual contra cada jugador:
-   - **Correr:** avanza 2 casillas. Falla si hay obstáculo.
-   - **Saltar:** esquiva obstáculo corto. Avanza 1.
-   - **Salto largo:** esquiva obstáculo largo/hueco. Avanza 1; no se puede
-     usar dos rondas seguidas (cansancio).
-4. Quien falla pierde una vida y no avanza.
-5. Se voltea la siguiente carta de obstáculo.
+- **Pista** de 20 casillas (0 = salida, 19 = meta), 3 corazones por jugador y prueba.
+- **Ronda:** (1) baja el bonus 1 (empieza en 10); (2) todos eligen en secreto
+  Correr / Saltar / Salto largo; (3) se voltea el obstáculo y se resuelve.
+- **Vistazo:** una ficha por jugador y prueba para mirar en secreto la carta
+  superior del mazo antes de elegir (es la forma de gestionar el azar).
+- **Cansancio:** tras un Salto largo, esa carta no se puede jugar la ronda siguiente.
+- **Caer:** -1 corazón y no avanzas. Con 0 corazones, eliminado de la prueba.
+- **Mazo de 24 cartas por prueba:** 5 libres, 7 bajos, 5 largos, 4 con bolsa, 3 especiales.
+- **Puntos:** llegar a meta = valor del bonus en ese momento (mín. 1) + 1 por
+  corazón restante + 2 por cada bolsa. Gana quien más puntos sume en las 3 pruebas.
+- **Pelota loca** (prueba 3): se tira un d6 (1-3 actúa como obstáculo bajo, 4-6 como largo).
 
-**Fin de prueba:** el primero en llegar a la meta se lleva el bonus que quede
-en el marcador; el resto cobra la mitad. Se suman puntos de bolsas y combos.
+Cambios respecto al borrador: se eliminan los multiplicadores y las fichas de
+pelota (las sustituyen la carta *Pelota loca* y el d6) y todos empiezan cada
+prueba con 3 vidas.
 
-**Fin de partida:** tras la última prueba, gana quien tenga más puntos (en solitario, compara con tu récord). Sin
-vidas = eliminado de esa prueba (vuelve en la siguiente con 1 vida).
+## 5. Componentes (contenido del PDF, 17 páginas A4)
 
-## 5. Componentes (lista inicial para el PDF)
+| Páginas | Contenido |
+|---|---|
+| 1 | Reglamento |
+| 2-4 | Tableros: Aros de fuego, Monos, Pelotas |
+| 5 | 4 peones de Charlie recortables |
+| 6 | Fichas (vidas, bolsas, vistazo, bonus) y hoja de puntuación |
+| 7-15 | 72 cartas de obstáculo (3 mazos de 24, 63×88 mm) |
+| 16-17 | 12 cartas de acción (3 por jugador) |
 
-- 3 tableros de prueba (pista de casillas, una hoja A4 por prueba), en pixel art.
-- Peones de Charlie en cartón (4 colores) con peana.
-- Mazo de obstáculos por prueba (≈ 24 cartas c/u, con repetidos para el azar).
-- 1 dado (d6) para velocidad de pelotas y eventos.
-- Mazo de acciones (3 cartas × 4 jugadores).
-- Marcador de bonus + ficha.
-- Fichas de vida, de bolsas de puntos y de multiplicador.
-- Hoja de reglas de 1 página.
-
-Todo en A4 monocromo-friendly, para imprimir en casa y recortar.
+El PDF se regenera con `python3 print/generate.py` (requiere `reportlab`).
 
 ## 6. Versión digital (fase 3)
 
@@ -105,3 +103,5 @@ salta.
 1. ✅ Plan ajustado con tus decisiones.
 2. Genero el PDF de piezas imprimibles (`print/`).
 3. Construyo la versión digital jugable (`digital/`).
+
+> Estado: fase 2 (PDF) hecha; falta la fase 3 (versión digital).
