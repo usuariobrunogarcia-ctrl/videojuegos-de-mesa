@@ -1,6 +1,8 @@
 # Circus Charlie — Plan de diseño
 
-> Estado: **borrador para revisión**. Nada de esto está fijado hasta aprobarlo.
+> Estado: **decisiones tomadas, plan listo para pasar a PDF**.
+>
+> Decisiones: 1 o más jugadores · mucho azar · 3 pruebas (aros de fuego, monos, pelotas) · estilo pixel art.
 
 ## 1. El "latido" del videojuego
 
@@ -31,21 +33,21 @@ anticipar qué viene en la fila de cartas visibles.
 
 ## 3. Estructura de la partida
 
-- **Jugadores:** 1–4. Modo competitivo (más puntos gana) y modo en solitario.
-- **Duración:** 20–30 min (4 pruebas cortas) o una prueba suelta en 5–8 min.
+- **Jugadores:** 1 o más (1–4). Con 1 jugador intentas batir tu récord de puntos; con 2+ gana quien más puntos sume.
+- **Azar:** alto. El mazo se baraja siempre y los obstáculos son impredecibles; la habilidad está en gestionar el riesgo, no en memorizar.
+- **Duración:** 15–20 min (3 pruebas) o una prueba suelta en 5–8 min.
 - **Una partida = una secuencia de pruebas.** Cada prueba tiene su propio
   mazo, tablero y regla especial.
 
-### Pruebas (versión inicial: 4)
-
-> Orden y detalles de los niveles originales a verificar antes de cerrar.
+### Pruebas (3)
 
 | Prueba | Mecánica original | Traducción de mesa |
 |---|---|---|
-| **1. Leones** | Saltar aros de fuego y hogueras sobre un león | Pista de casillas. Cartas: aro, hoguera, aro+bolsa de puntos. Saltar un aro con bolsa da bonus extra |
-| **2. Cuerda floja** | Avanzar saltando monos y huecos | Pista estrecha: fallar un salto = caída (pierdes vida). Los monos usan un patrón fijo de cartas |
-| **3. Pelotas** | Saltar de pelota en pelota | Pelotas fichas de distinta velocidad; hay que "aterrizar" en una al saltar |
-| **4. Caballo / trampolín** | Saltos encadenados y vallas | Combos: encadenar saltos seguidos suma multiplicador |
+| **1. Aros de fuego** | Saltar aros de fuego y hogueras sobre un león | Pista de casillas. Cartas: aro, hoguera, aro+bolsa de puntos. Saltar un aro con bolsa da bonus extra |
+| **2. Monos** | Avanzar por la cuerda floja saltando monos | Pista estrecha: fallar un salto = caída (pierdes vida). Los monos salen al azar, en carriles alto o bajo |
+| **3. Pelotas** | Saltar de pelota en pelota | Fichas de pelota de distinta velocidad (dado); hay que "aterrizar" en una al saltar |
+
+Cada prueba se puede jugar suelta o encadenada en el orden 1 → 2 → 3.
 
 ## 4. Reglas base (primera propuesta)
 
@@ -67,14 +69,15 @@ prueba y se revelan las **3 próximas cartas** (visibles = lo que viene).
 **Fin de prueba:** el primero en llegar a la meta se lleva el bonus que quede
 en el marcador; el resto cobra la mitad. Se suman puntos de bolsas y combos.
 
-**Fin de partida:** tras la última prueba, gana quien tenga más puntos. Sin
+**Fin de partida:** tras la última prueba, gana quien tenga más puntos (en solitario, compara con tu récord). Sin
 vidas = eliminado de esa prueba (vuelve en la siguiente con 1 vida).
 
 ## 5. Componentes (lista inicial para el PDF)
 
-- 4 tableros de prueba (pista de casillas, una hoja A4 por prueba).
+- 3 tableros de prueba (pista de casillas, una hoja A4 por prueba), en pixel art.
 - Peones de Charlie en cartón (4 colores) con peana.
-- Mazo de obstáculos por prueba (≈ 20 cartas c/u).
+- Mazo de obstáculos por prueba (≈ 24 cartas c/u, con repetidos para el azar).
+- 1 dado (d6) para velocidad de pelotas y eventos.
 - Mazo de acciones (3 cartas × 4 jugadores).
 - Marcador de bonus + ficha.
 - Fichas de vida, de bolsas de puntos y de multiplicador.
@@ -89,20 +92,16 @@ cartas y tablero visuales. Sirve para **probar y equilibrar** antes de imprimir:
 simular cientos de partidas y ver si ganar siempre es del que corre o del que
 salta.
 
-## 7. Decisiones abiertas — necesito tu opinión
+## 7. Decisiones tomadas
 
-1. **Tensión:** ¿competitivo (carrera entre jugadores) o cooperativo (todos
-   contra el reloj)? Propongo competitivo con modo solitario.
-2. **Nivel de azar:** el mazo introduce azar en los obstáculos. ¿Prefieres
-   menos azar (orden de cartas casi fijo, memorizable) o más?
-3. **Número de pruebas:** ¿4 o las 6 del original?
-4. **Estilo gráfico del PDF:** ¿pixel art retro, o ilustración de circo
-   vintage?
-5. **Idioma del material:** español, asumo.
+1. **Jugadores:** 1 o más.
+2. **Azar:** alto.
+3. **Pruebas:** aros de fuego, monos y pelotas.
+4. **Estilo gráfico:** pixel art (paleta limitada, sprites de 16×16 ampliados).
+5. **Idioma:** español.
 
 ## 8. Siguientes pasos
 
-1. Tú revisas este plan y respondes a la sección 7.
-2. Ajusto el plan y lo marco como **aprobado**.
-3. Genero el PDF de piezas imprimibles (`print/`).
-4. Construyo la versión digital jugable (`digital/`).
+1. ✅ Plan ajustado con tus decisiones.
+2. Genero el PDF de piezas imprimibles (`print/`).
+3. Construyo la versión digital jugable (`digital/`).

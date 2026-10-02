@@ -24,4 +24,4 @@ sustituye por reglas automáticas y deterministas (mazos, patrones, dados).
 
 | Juego | Planificación | PDF imprimible | Versión digital |
 |---|---|---|---|
-| [Circus Charlie](games/circus-charlie/PLAN.md) | 📝 Borrador | ⏳ | ⏳ |
+| [Circus Charlie](games/circus-charlie/PLAN.md) | ✅ Aprobado | ⏳ | ⏳ |
