@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circus Charlie de mesa — versión digital</title>
+<style>
+  :root { --bg:#14142b; --panel:#1f1f3d; --line:#3a3a6a; --txt:#f4f1de; --mut:#9a9ac0; --red:#d62828; --yel:#fcbf49; --grn:#2a9d4f; --acc:#d94f1e; --light:#ffe3cc; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px/1.4 "Courier New",ui-monospace,monospace; }
+  img, canvas { image-rendering:pixelated; }
+  h1 { margin:0; font-size:20px; letter-spacing:1px; }
+  header { display:flex; flex-wrap:wrap; gap:12px 24px; align-items:center; padding:12px 16px; background:var(--acc); color:#fff; border-bottom:4px solid #000; }
+  header .sp { flex:1; }
+  #bonus { display:flex; gap:2px; }
+  #bonus span { width:22px; height:24px; background:#fff3; text-align:center; font-size:12px; line-height:24px; border:1px solid #0004; }
+  #bonus span.on { background:var(--yel); color:#000; font-weight:bold; }
+  main { display:grid; grid-template-columns:minmax(300px,1.3fr) minmax(300px,1fr); gap:16px; padding:16px; max-width:1100px; margin:0 auto; }
+  @media (max-width:760px) { main { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:3px solid var(--line); border-radius:6px; padding:12px; }
+  .panel h2 { margin:0 0 8px; font-size:14px; color:var(--yel); text-transform:uppercase; letter-spacing:1px; }
+  #pista { display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:92px; gap:4px; }
+  .cel { position:relative; background:var(--light); color:#7a3511; border:2px solid #000; padding:3px 5px; overflow:hidden; }
+  .cel.alt { background:#fff; }
+  .cel b { font-size:15px; }
+  .cel.meta { background:repeating-conic-gradient(#000 0 25%, #fff 0 50%) 0 0/20px 20px; color:#fff; }
+  .cel.meta b { background:#000; padding:0 3px; }
+  .peones { position:absolute; inset:auto 0 2px 0; display:flex; justify-content:center; align-items:flex-end; gap:0; }
+  .peones img { height:56px; margin:0 -3px; }
+  .jug { display:flex; align-items:center; gap:10px; padding:6px 8px; border:3px solid var(--line); border-radius:6px; margin-bottom:6px; }
+  .jug.act { border-color:var(--yel); }
+  .jug.fuera { opacity:.5; }
+  .jug img.p { height:40px; }
+  .jug .corazones img { height:14px; margin-right:2px; }
+  .jug small { color:var(--mut); }
+  .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  button { font:inherit; font-weight:bold; color:#fff; background:var(--acc); border:3px solid #000; border-radius:4px; padding:10px 14px; cursor:pointer; box-shadow:0 4px 0 #000; }
+  button:active { transform:translateY(3px); box-shadow:0 1px 0 #000; }
+  button.sec { background:#3a3a6a; }
+  button.grn { background:var(--grn); }
+  button:disabled { opacity:.35; cursor:not-allowed; }
+  .accion { flex:1 1 90px; text-align:center; }
+  .accion small { display:block; font-weight:normal; font-size:11px; opacity:.85; }
+  #carta { text-align:center; }
+  #carta canvas { width:100%; max-width:360px; border:3px solid #000; background:#fff; }
+  .dorso { width:100%; max-width:360px; aspect-ratio:240/140; margin:0 auto; border:3px solid #000; background:repeating-linear-gradient(45deg,#7b4fd0 0 12px,#5a37a8 12px 24px); display:grid; place-items:center; font-size:48px; color:#fff; }
+  table.res { width:100%; border-collapse:collapse; margin-top:8px; font-size:13px; }
+  table.res td { border:2px solid var(--line); padding:4px 6px; }
+  table.res td:first-child { background:#3a3a6a; width:34%; }
+  .ok { color:#6be38e; } .mal { color:#ff7b7b; }
+  ul.log { list-style:none; margin:8px 0 0; padding:0; font-size:13px; }
+  ul.log li { padding:3px 0; border-bottom:1px dashed var(--line); }
+  .velo { position:fixed; inset:0; background:#000c; display:grid; place-items:center; z-index:10; padding:16px; }
+  .velo .caja { background:var(--panel); border:4px solid var(--yel); border-radius:8px; padding:24px; max-width:460px; text-align:center; }
+  .velo h2 { margin-top:0; color:var(--yel); }
+  .chips { display:flex; justify-content:center; gap:8px; margin:12px 0; }
+  .chips button { min-width:52px; }
+  .chips button.sel { background:var(--yel); color:#000; }
+  table.pts { width:100%; border-collapse:collapse; margin:12px 0; }
+  table.pts th, table.pts td { border:2px solid var(--line); padding:5px 8px; text-align:center; }
+  .ayuda { color:var(--mut); font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>CIRCUS CHARLIE <span style="font-weight:normal">de mesa</span></h1>
+  <div id="titPrueba"></div>
+  <div class="sp"></div>
+  <div>BONUS <span id="bonus"></span></div>
+</header>
+<main>
+  <section class="panel">
+    <h2>Pista</h2>
+    <div id="pista"></div>
+    <div id="log"></div>
+  </section>
+  <section>
+    <div class="panel" id="carta"></div>
+    <div class="panel" id="jugadores" style="margin-top:16px"></div>
+    <div class="panel" id="acciones" style="margin-top:16px"></div>
+  </section>
+</main>
+<div id="overlay"></div>
+
+<script src="sprites.js"></script>
+<script src="game.js"></script>
+<script>
+const J = window.Juego;
+const AC = { correr: 'Correr', saltar: 'Saltar', largo: 'Salto largo' };
+const NOTA = { correr: 'rápido y arriesgado', saltar: 'obstáculos bajos y bolsas', largo: 'seguro, pero cansa' };
+const PRUEBA_COL = [{ main: '#d94f1e', light: '#ffe3cc', floor: '#a33a14' }, { main: '#1d6fd1', light: '#d8ecff', floor: '#8b5a2b' }, { main: '#7b4fd0', light: '#e6dcff', floor: '#4b2f8f' }];
+const $ = (id) => document.getElementById(id);
+
+let S = null;          // estado del juego
+let U = null;          // estado de la interfaz
+let nJug = 1;
+
+function describir(r) {
+  if (r.cae) return '¡Cae! -1 vida';
+  return 'Avanzas ' + r.mueve + (r.bolsa ? ' y bolsa (2 pts)' : '');
+}
+
+/* ---------------------------------------------------------- escena */
+function escena(canvas, prueba, tipo, dado) {
+  const W = 240, H = 140, FL = 118;
+  canvas.width = W; canvas.height = H;
+  const c = canvas.getContext('2d');
+  const col = PRUEBA_COL[prueba];
+  c.fillStyle = col.light; c.fillRect(0, 0, W, H);
+  dibujar(c, GRIDS.nube, W - 52, 8, 3.5);
+  const sobre = (g, x, px, dy) => { const h = GRIDS[g].length * px; return dibujar(c, GRIDS[g], x, FL - h - (dy || 0), px); };
+  if (prueba === 1) {
+    c.strokeStyle = col.floor; c.lineWidth = 3; c.beginPath();
+    if (tipo === 'largo') { c.moveTo(0, FL); c.lineTo(110, FL); c.moveTo(168, FL); c.lineTo(W, FL); } else { c.moveTo(0, FL); c.lineTo(W, FL); }
+    c.stroke();
+    if (tipo === 'largo') { c.fillStyle = '#1a1a2e'; c.font = 'bold 14px monospace'; c.fillText('v v v', 120, FL + 16); }
+  } else {
+    c.fillStyle = col.floor; c.fillRect(0, FL, W, H - FL);
+    if (prueba === 2 && tipo === 'largo') { c.fillStyle = col.light; c.fillRect(118, FL, 44, H - FL); c.fillStyle = '#1a1a2e'; c.font = 'bold 12px monospace'; c.fillText('v v', 128, FL + 16); }
+  }
+  dibujar(c, GRIDS.charlie, 10, FL - 48, 3, { a: '#d62828' });
+  if (tipo === 'vacio') { c.fillStyle = col.main; c.font = 'bold 34px monospace'; c.fillText('>>>', 100, FL - 30); return; }
+  if (prueba === 0) {
+    if (tipo === 'bajo') sobre('hoguera', 120, 4);
+    else if (tipo === 'largo') sobre('aro', 100, 4);
+    else if (tipo === 'bolsa') { sobre('aro', 100, 4); sobre('bolsa', 126, 3, 14); }
+    else { sobre('aro', 84, 3); sobre('aro', 134, 3); }
+  } else if (prueba === 1) {
+    if (tipo === 'bajo') sobre('mono', 120, 4);
+    else if (tipo === 'bolsa') { sobre('mono', 96, 3.5); sobre('bolsa', 160, 3); }
+    else if (tipo === 'especial') { sobre('mono', 110, 4); c.fillStyle = '#d62828'; c.font = 'bold 40px monospace'; c.fillText('!', 176, FL - 50); }
+  } else {
+    if (tipo === 'bajo') sobre('pelota', 124, 3.5);
+    else if (tipo === 'largo') { sobre('pelota', 84, 2.5); sobre('pelota', 168, 2.5); }
+    else if (tipo === 'bolsa') { sobre('pelota', 104, 3); sobre('bolsa', 160, 3); }
+    else {
+      sobre('pelota', 120, 4);
+      c.fillStyle = '#fcbf49'; c.strokeStyle = '#1a1a2e'; c.lineWidth = 3; c.font = 'bold 40px monospace';
+      c.strokeText(dado || '?', 138, FL - 20); c.fillText(dado || '?', 138, FL - 20);
+    }
+  }
+}
+
+/* ---------------------------------------------------------- flujo */
+function empezar(n) {
+  S = J.nuevaPartida(n);
+  nJug = n;
+  U = { vista: null, res: null, k: 0 };
+  nuevaRonda();
+}
+
+function nuevaRonda() {
+  J.empezarRonda(S);
+  U.cola = J.activos(S).map((p) => S.jugadores.indexOf(p));
+  U.eleccion = S.jugadores.map(() => null);
+  U.k = 0; U.vista = null; U.res = null;
+  U.fase = 'elegir';
+  U.listo = S.jugadores.length === 1;   // en solitario no hace falta pasar el dispositivo
+  render();
+}
+
+function elegir(a) {
+  const i = U.cola[U.k];
+  U.eleccion[i] = a;
+  U.k++; U.vista = null;
+  if (U.k >= U.cola.length) {
+    U.res = J.resolverRonda(S, U.eleccion);
+    U.fase = 'resultado';
+  } else {
+    U.listo = false;
+  }
+  render();
+}
+
+function vistazo() {
+  const p = S.jugadores[U.cola[U.k]];
+  if (p.vistazo < 1) return;
+  p.vistazo--;
+  U.vista = J.siguienteCarta(S);
+  render();
+}
+
+function seguir() {
+  if (S.fase === 'ronda') nuevaRonda();
+  else if (S.fase === 'fin_prueba') { U.fase = 'resumen'; render(); }
+  else { U.fase = 'resumen'; render(); }
+}
+
+function siguientePrueba() { J.iniciarPrueba(S); nuevaRonda(); }
+
+/* ---------------------------------------------------------- render */
+function render() {
+  const col = PRUEBA_COL[S ? S.prueba : 0];
+  document.documentElement.style.setProperty('--acc', col.main);
+  document.documentElement.style.setProperty('--light', col.light);
+  const prueba = S ? S.prueba : 0;
+  $('titPrueba').textContent = S ? `Prueba ${prueba + 1}/3 — ${J.INFO[J.PRUEBAS[prueba]].titulo} · ronda ${S.ronda}` : '';
+  // bonus
+  let b = '';
+  for (let v = J.CFG.bonus; v >= 0; v--) b += `<span class="${S && S.bonus === v ? 'on' : ''}">${v}</span>`;
+  $('bonus').innerHTML = b;
+  pintarPista();
+  pintarJugadores();
+  pintarCarta();
+  pintarAcciones();
+  pintarOverlay();
+}
+
+function pintarPista() {
+  const meta = J.CFG.meta;
+  let h = '';
+  for (let n = 0; n <= meta; n++) {
+    const fila = Math.floor(n / 4), k = n % 4, colu = fila % 2 === 0 ? k : 3 - k;
+    const aqui = S.jugadores.filter((p) => p.pos === n);
+    h += `<div class="cel ${(fila + colu) % 2 ? 'alt' : ''} ${n === meta ? 'meta' : ''}" style="grid-row:${fila + 1};grid-column:${colu + 1}">
+      <b>${n === 0 ? 'SALIDA' : n === meta ? 'META' : n}</b>
+      <div class="peones">${aqui.map((p) => `<img alt="${p.nombre}" src="${spriteURL('charlie', 4, { a: p.color })}">`).join('')}</div></div>`;
+  }
+  $('pista').innerHTML = h;
+}
+
+function pintarJugadores() {
+  const act = U.fase === 'elegir' && U.listo ? U.cola[U.k] : -1;
+  $('jugadores').innerHTML = '<h2>Jugadores</h2>' + S.jugadores.map((p, i) => {
+    const total = p.totales.reduce((a, b) => a + b, 0);
+    const estado = p.eliminado ? 'eliminado' : p.llegada ? '¡en meta!' : p.cansado ? 'cansado (sin salto largo)' : '';
+    return `<div class="jug ${i === act ? 'act' : ''} ${p.eliminado ? 'fuera' : ''}">
+      <img class="p" src="${spriteURL('charlie', 3, { a: p.color })}" alt="">
+      <div><b style="color:${p.color}">${p.nombre}</b> <small>${estado}</small><br>
+      <span class="corazones">${Array.from({ length: Math.max(p.vidas, 0) }, () => `<img src="${spriteURL('corazon', 2)}" alt="vida">`).join('')}</span>
+      <small> bolsas ${p.bolsas} · prueba ${p.pts} pts · total ${total}</small></div></div>`;
+  }).join('');
+}
+
+function pintarCarta() {
+  const el = $('carta');
+  const nombres = J.INFO[J.PRUEBAS[S.prueba]].nombres;
+  if (U.fase === 'resultado' || U.fase === 'resumen') {
+    const r = U.res;
+    const efectivo = r.tipo === 'especial' && S.prueba === 2 ? (r.dado <= 3 ? 'bajo' : 'largo') : r.tipo;
+    let extra = r.dado ? `<p class="ayuda">Dado: ${r.dado} → actúa como «${nombres[efectivo]}»</p>` : '';
+    const rows = J.ACCIONES.map((a) => {
+      const x = J.resolver(J.PRUEBAS[S.prueba], r.tipo, a, r.dado);
+      const quien = r.eventos.filter((e) => e.accion === a).map((e) => `<span style="color:${S.jugadores[e.jugador].color}">●</span>`).join('');
+      return `<tr><td>${AC[a]} ${quien}</td><td class="${x.cae ? 'mal' : 'ok'}">${describir(x)}</td></tr>`;
+    }).join('');
+    el.innerHTML = `<h2>Obstáculo: ${nombres[r.tipo]}</h2><canvas id="cv"></canvas>` + extra + `<table class="res">${rows}</table>`;
+    escena($('cv'), S.prueba, r.tipo, r.dado);
+  } else {
+    el.innerHTML = `<h2>Próximo obstáculo</h2><div class="dorso">?</div>
+      <p class="ayuda">Mazo: ${S.mazo.length} cartas. Nadie sabe qué viene…</p>`;
+  }
+}
+
+function pintarAcciones() {
+  const el = $('acciones');
+  if (U.fase === 'elegir') {
+    if (!U.listo) { el.innerHTML = '<h2>Elegid acción</h2><p class="ayuda">Esperando al siguiente jugador…</p>'; return; }
+    const i = U.cola[U.k], p = S.jugadores[i];
+    const disp = J.disponibles(p);
+    el.innerHTML = `<h2 style="color:${p.color}">Turno de ${p.nombre}</h2>
+      <div class="btns">${J.ACCIONES.map((a, n) => `<button class="accion" data-a="${a}" ${disp.includes(a) ? '' : 'disabled'}>[${n + 1}] ${AC[a]}<small>${a === 'largo' && !disp.includes(a) ? 'cansado' : NOTA[a]}</small></button>`).join('')}</div>
+      <div class="btns"><button class="sec" id="bVis" ${p.vistazo > 0 && !U.vista ? '' : 'disabled'}>👁 Vistazo (${p.vistazo})</button></div>
+      ${U.vista ? `<p>La próxima carta es: <b>${J.INFO[J.PRUEBAS[S.prueba]].nombres[U.vista]}</b>${S.prueba === 2 && U.vista === 'especial' ? ' (el dado se tira al revelar)' : ''}</p>` : ''}
+      <p class="ayuda">Tu elección es secreta hasta que todos hayan elegido.</p>`;
+    el.querySelectorAll('.accion').forEach((b) => (b.onclick = () => elegir(b.dataset.a)));
+    const v = $('bVis'); if (v) v.onclick = vistazo;
+  } else if (U.fase === 'resultado') {
+    const r = U.res;
+    const li = r.eventos.map((e) => {
+      const p = S.jugadores[e.jugador];
+      let t = `${AC[e.accion]} → `;
+      t += e.cae ? '<span class="mal">¡cae! -1 vida</span>' : `<span class="ok">avanza ${e.mueve}</span>`;
+      if (e.bolsa) t += ' <span class="ok">+2 bolsa</span>';
+      if (e.meta) t += ` <span class="ok">¡META! +${e.meta} bonus</span>`;
+      if (e.eliminado) t += ' <span class="mal">eliminado</span>';
+      return `<li><b style="color:${p.color}">${p.nombre}</b>: ${t}</li>`;
+    }).join('');
+    el.innerHTML = `<h2>Resultado de la ronda</h2><ul class="log">${li}</ul>
+      <div class="btns"><button class="grn" id="bSig">${S.fase === 'ronda' ? 'Siguiente ronda ▶' : 'Fin de la prueba ▶'}</button></div>`;
+    $('bSig').onclick = seguir;
+  } else el.innerHTML = '';
+}
+
+function pintarOverlay() {
+  const ov = $('overlay');
+  if (U.fase === 'elegir' && !U.listo) {
+    const p = S.jugadores[U.cola[U.k]];
+    ov.innerHTML = `<div class="velo"><div class="caja"><h2>Pasa el dispositivo</h2>
+      <p>Turno de <b style="color:${p.color}">${p.nombre}</b>.<br>Los demás, no miréis la pantalla.</p>
+      <button id="bListo">Estoy listo</button></div></div>`;
+    $('bListo').onclick = () => { U.listo = true; render(); };
+  } else if (U.fase === 'resumen') {
+    const fin = S.fase === 'final';
+    const filas = S.jugadores.map((p) => {
+      const t = p.totales.reduce((a, b) => a + b, 0);
+      return `<tr><td style="color:${p.color}"><b>${p.nombre}</b></td>${[0, 1, 2].map((i) => `<td>${S.prueba >= i ? p.totales[i] : '-'}</td>`).join('')}<td><b>${t}</b></td></tr>`;
+    }).join('');
+    let cabeza = `Prueba ${S.prueba + 1} terminada`, pie = '';
+    if (fin) {
+      const best = Math.max(...S.jugadores.map(J.total));
+      const gan = S.jugadores.filter((p) => J.total(p) === best);
+      if (S.jugadores.length === 1) {
+        let rec = 0; try { rec = +localStorage.getItem('cc-record') || 0; } catch (e) {}
+        const nuevo = best > rec;
+        if (nuevo) { try { localStorage.setItem('cc-record', best); } catch (e) {} }
+        cabeza = '¡Fin de la partida!';
+        pie = `<p><b>${best}</b> puntos. ${nuevo ? '🏆 ¡Nuevo récord!' : 'Récord: ' + rec}</p>`;
+      } else {
+        const masBolsas = Math.max(...gan.map((p) => p.bolsasTot));
+        const ganan = gan.filter((p) => p.bolsasTot === masBolsas);
+        cabeza = '¡Fin de la partida!';
+        pie = `<p>Gana: ${ganan.map((p) => `<b style="color:${p.color}">${p.nombre}</b>`).join(' y ')} con ${best} puntos${gan.length > 1 ? ' (desempate por bolsas)' : ''}.</p>`;
+      }
+    }
+    ov.innerHTML = `<div class="velo"><div class="caja"><h2>${cabeza}</h2>
+      <table class="pts"><tr><th></th><th>Aros</th><th>Monos</th><th>Pelotas</th><th>Total</th></tr>${filas}</table>${pie}
+      <button id="bNext">${fin ? 'Jugar otra vez' : 'Siguiente prueba ▶'}</button></div></div>`;
+    $('bNext').onclick = () => (fin ? menu() : siguientePrueba());
+  } else if (U.fase === 'menu') {
+    let rec = 0; try { rec = +localStorage.getItem('cc-record') || 0; } catch (e) {}
+    ov.innerHTML = `<div class="velo"><div class="caja"><h2>Circus Charlie de mesa</h2>
+      <p>Supera Aros de fuego, Monos y Pelotas. Tú solo decides <b>cuándo saltar</b>.</p>
+      <p class="ayuda">Todos eligen acción en secreto; el obstáculo se revela después.</p>
+      <p>Jugadores:</p><div class="chips">${[1, 2, 3, 4].map((n) => `<button data-n="${n}" class="${n === nJug ? 'sel' : ''}">${n}</button>`).join('')}</div>
+      ${rec ? `<p class="ayuda">Récord en solitario: ${rec}</p>` : ''}
+      <button class="grn" id="bGo">¡A jugar!</button></div></div>`;
+    ov.querySelectorAll('.chips button').forEach((b) => (b.onclick = () => { nJug = +b.dataset.n; menu(); }));
+    $('bGo').onclick = () => empezar(nJug);
+  } else ov.innerHTML = '';
+}
+
+function menu() {
+  S = J.nuevaPartida(nJug);
+  U = { fase: 'menu', res: null, cola: [], k: 0 };
+  render();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (U && U.fase === 'elegir' && U.listo) {
+    const a = J.ACCIONES[+e.key - 1];
+    if (a && J.disponibles(S.jugadores[U.cola[U.k]]).includes(a)) elegir(a);
+  }
+});
+
+menu();
+</script>
+</body>
+</html>

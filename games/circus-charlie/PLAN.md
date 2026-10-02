@@ -49,26 +49,42 @@ anticipar qué viene en la fila de cartas visibles.
 
 Cada prueba se puede jugar suelta o encadenada en el orden 1 → 2 → 3.
 
-## 4. Reglas finales (las que implementa el PDF)
+## 4. Reglas finales (las que implementan el PDF y la versión digital)
 
 Reglamento completo en la primera página de
 [`print/circus-charlie-imprimible.pdf`](print/circus-charlie-imprimible.pdf). Resumen:
 
-- **Pista** de 20 casillas (0 = salida, 19 = meta), 3 corazones por jugador y prueba.
-- **Ronda:** (1) baja el bonus 1 (empieza en 10); (2) todos eligen en secreto
+- **Pista** de 12 casillas (0 = salida, 11 = meta), 4 corazones por jugador y prueba.
+- **Ronda:** (1) baja el bonus 1 (empieza en 12); (2) todos eligen en secreto
   Correr / Saltar / Salto largo; (3) se voltea el obstáculo y se resuelve.
+- **Acciones:** Correr avanza 4 si el camino está libre (si hay obstáculo, cae);
+  Saltar supera obstáculos bajos y recoge bolsas; Salto largo supera todo
+  (avanza 1) pero tras usarlo no se puede repetir la ronda siguiente (cansancio).
 - **Vistazo:** una ficha por jugador y prueba para mirar en secreto la carta
-  superior del mazo antes de elegir (es la forma de gestionar el azar).
-- **Cansancio:** tras un Salto largo, esa carta no se puede jugar la ronda siguiente.
+  superior del mazo antes de elegir.
 - **Caer:** -1 corazón y no avanzas. Con 0 corazones, eliminado de la prueba.
-- **Mazo de 24 cartas por prueba:** 5 libres, 7 bajos, 5 largos, 4 con bolsa, 3 especiales.
+- **Mazo de 24 cartas por prueba:** 10 libres, 5 bajos, 4 largos, 3 con bolsa, 2 especiales.
 - **Puntos:** llegar a meta = valor del bonus en ese momento (mín. 1) + 1 por
-  corazón restante + 2 por cada bolsa. Gana quien más puntos sume en las 3 pruebas.
+  corazón restante + 2 por cada bolsa. Gana quien más puntos sume en las 3 pruebas
+  (desempate: más bolsas).
 - **Pelota loca** (prueba 3): se tira un d6 (1-3 actúa como obstáculo bajo, 4-6 como largo).
 
-Cambios respecto al borrador: se eliminan los multiplicadores y las fichas de
-pelota (las sustituyen la carta *Pelota loca* y el d6) y todos empiezan cada
-prueba con 3 vidas.
+### Equilibrio (simulado)
+
+`digital/simulate.js` juega 2000 partidas en solitario por estrategia. Una
+primera versión (20 casillas, 3 vidas, Correr +2, 5 cartas libres) era
+injugable: Correr estaba dominado (casi siempre caía) y solo se llegaba a meta
+en el 21 % de los intentos. Tras ajustar los parámetros:
+
+| Estrategia | Llega a meta | Puntos / prueba | Rondas |
+|---|---|---|---|
+| Siempre seguro (alterna Saltar / Salto largo) | 93 % | 5,4 | 12,3 |
+| Mixta (40 % Correr) | 68 % | 4,9 | 8,3 |
+| Siempre Correr | 52 % | 4,8 | 5,2 |
+
+Jugar seguro rinde algo más de media, pero arriesgarse da partidas mucho más
+rápidas y puntuaciones más variables: la decisión es real. Las estrategias son
+simples (no usan el vistazo), así que los jugadores humanos podrán mejorarlas.
 
 ## 5. Componentes (contenido del PDF, 17 páginas A4)
 
@@ -83,12 +99,17 @@ prueba con 3 vidas.
 
 El PDF se regenera con `python3 print/generate.py` (requiere `reportlab`).
 
-## 6. Versión digital (fase 3)
+## 6. Versión digital
 
-Web simple (HTML + JS, sin dependencias) que implementa las mismas reglas con
-cartas y tablero visuales. Sirve para **probar y equilibrar** antes de imprimir:
-simular cientos de partidas y ver si ganar siempre es del que corre o del que
-salta.
+Carpeta [`digital/`](digital/): abre `index.html` en el navegador (no necesita
+instalar nada ni conexión).
+
+- `game.js`: lógica del juego, sin interfaz (se usa también desde Node).
+- `sprites.js`: los mismos sprites en pixel art que el PDF.
+- `index.html`: interfaz. 1 a 4 jugadores en el mismo dispositivo; con 2 o más
+  se pasa el dispositivo para elegir en secreto. En solitario guarda tu récord.
+- `simulate.js`: simulador de equilibrio (`node digital/simulate.js`).
+- Atajos: teclas 1, 2 y 3 eligen Correr, Saltar y Salto largo.
 
 ## 7. Decisiones tomadas
 
@@ -104,4 +125,4 @@ salta.
 2. Genero el PDF de piezas imprimibles (`print/`).
 3. Construyo la versión digital jugable (`digital/`).
 
-> Estado: fase 2 (PDF) hecha; falta la fase 3 (versión digital).
+> Estado: las tres fases están hechas (plan, PDF y versión digital).

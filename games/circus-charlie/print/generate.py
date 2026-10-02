@@ -24,10 +24,10 @@ PRUEBAS = {
                     nombres=dict(vacio='Pista libre', bajo='Pelota pequeña', largo='Hueco entre pelotas',
                                  bolsa='Pelota con bolsa', especial='Pelota loca')),
 }
-MAZO = [('vacio', 5), ('bajo', 7), ('largo', 5), ('bolsa', 4), ('especial', 3)]
+MAZO = [('vacio', 10), ('bajo', 5), ('largo', 4), ('bolsa', 3), ('especial', 2)]
 CAE = '¡Cae! -1 vida'
 RESULT = {
-    'vacio': ('Avanzas 2', 'Avanzas 1', 'Avanzas 1'),
+    'vacio': ('Avanzas 4', 'Avanzas 1', 'Avanzas 1'),
     'bajo': (CAE, 'Avanzas 1', 'Avanzas 1'),
     'largo': (CAE, CAE, 'Avanzas 1'),
     'bolsa': (CAE, 'Avanzas 1 y bolsa (2 pts)', 'Avanzas 1'),
@@ -38,7 +38,7 @@ ESPECIAL = {
     'pelotas': (CAE, '1-3: avanzas 1 / 4-6: cae', 'Avanzas 1'),
 }
 DESC = {
-    'vacio': 'Nada en el camino. Aprovecha para correr.',
+    'vacio': 'Nada en el camino: ¡a correr!',
     'bajo': 'Obstáculo bajo: hay que saltarlo.',
     'largo': 'Obstáculo largo: solo un salto largo lo supera.',
     'bolsa': 'Un salto corto recoge la bolsa de puntos.',
@@ -228,12 +228,12 @@ def tablero(c, clave):
         draw_sprite(c, ball(14), W - 145, H - 112, 3.5)
         draw_sprite(c, ball(14), W - 90, H - 112, 3.5)
 
-    cell = 100
-    x0 = (W - 5 * cell) / 2
+    cell = 125
+    x0 = (W - 4 * cell) / 2
     top = H - 140
-    for n in range(20):
-        fila, k = n // 5, n % 5
-        col = k if fila % 2 == 0 else 4 - k
+    for n in range(12):
+        fila, k = n // 4, n % 4
+        col = k if fila % 2 == 0 else 3 - k
         x = x0 + col * cell
         y = top - (fila + 1) * cell
         c.setFillColor(hexc(p['light']) if (fila + col) % 2 == 0 else colors.white)
@@ -246,17 +246,17 @@ def tablero(c, clave):
         if n == 0:
             c.setFont('Helvetica-Bold', 14)
             c.drawCentredString(x + cell / 2, y + 12, 'SALIDA')
-        if n == 19:
-            sz = 11
+        if n == 11:
+            sz = 13
             for a in range(8):
                 for b in range(3):
                     c.setFillColor(colors.black if (a + b) % 2 == 0 else colors.white)
-                    c.rect(x + 6 + a * sz, y + 6 + b * sz, sz, sz, fill=1, stroke=0)
+                    c.rect(x + 10 + a * sz, y + 10 + b * sz, sz, sz, fill=1, stroke=0)
             c.setFillColor(hexc(p['main']))
             c.setFont('Helvetica-Bold', 16)
-            c.drawCentredString(x + cell / 2, y + 48, 'META')
+            c.drawCentredString(x + cell / 2, y + 66, 'META')
         # flecha de sentido
-        if n < 19 and k < 4:
+        if n < 11 and k < 3:
             ax = x + cell - 18 if fila % 2 == 0 else x + 18
             d = 1 if fila % 2 == 0 else -1
             c.setFillColor(hexc(p['main']))
@@ -269,13 +269,13 @@ def tablero(c, clave):
             path.close()
             c.drawPath(path, fill=1, stroke=0)
     # Bonus
-    by = top - 4 * cell - 62
+    by = top - 3 * cell - 62
     c.setFillColor(colors.HexColor('#1a1a2e'))
     c.setFont('Helvetica-Bold', 11)
-    c.drawString(x0, by + 46, 'BONUS  -  baja 1 casilla cada ronda. Colocar la ficha en el 10 al empezar.')
-    bw = 500 / 11
-    for i in range(11):
-        v = 10 - i
+    c.drawString(x0, by + 46, 'BONUS  -  baja 1 casilla cada ronda. Colocar la ficha en el 12 al empezar.')
+    bw = 500 / 13
+    for i in range(13):
+        v = 12 - i
         c.setFillColor(hexc(p['light']) if i % 2 == 0 else colors.white)
         c.setStrokeColor(colors.HexColor('#1a1a2e'))
         c.setLineWidth(1.2)
@@ -309,12 +309,12 @@ def tablero(c, clave):
         c.drawString(x + 8, py + 101, 'JUGADOR ' + nombre.upper())
         c.setFillColor(colors.HexColor('#1a1a2e'))
         c.setFont('Helvetica', 8)
-        c.drawString(x + 8, py + 82, 'Vidas (3 corazones)')
-        for k in range(3):
+        c.drawString(x + 8, py + 82, 'Vidas (4 corazones)')
+        for k in range(4):
             c.setStrokeColor(colors.HexColor('#999999'))
             c.setDash(2, 2)
             c.setLineWidth(0.8)
-            c.roundRect(x + 8 + k * 34, py + 46, 30, 30, 4, fill=0, stroke=1)
+            c.roundRect(x + 6 + k * 27, py + 48, 25, 25, 4, fill=0, stroke=1)
             c.setDash()
         c.setFont('Helvetica', 8)
         c.drawString(x + 8, py + 32, 'Puntos de esta prueba')
@@ -457,7 +457,7 @@ def fichas(c):
 
 # ---------------------------------------------------------------- cartas de acción
 ACCIONES = [
-    ('CORRER', 'Avanzas 2 casillas si el camino está libre.',
+    ('CORRER', 'Avanzas 4 casillas si el camino está libre.',
      'Si hay obstáculo: ¡cae!'),
     ('SALTAR', 'Salto corto: supera obstáculos bajos.',
      'Recoge bolsas (2 pts).'),
@@ -531,8 +531,8 @@ def reglas(c):
       'hoja de puntuación y un dado de 6 caras (no incluido, solo para la Pelota loca).')
     Hd('PREPARACIÓN (cada prueba)')
     P('1. Coloca el tablero. Cada jugador pone su peón en <b>SALIDA (0)</b>.<br/>'
-      '2. Cada jugador coge sus 3 cartas de acción (Correr, Saltar, Salto largo), 3 corazones y 1 ficha de vistazo.<br/>'
-      '3. Baraja el mazo de la prueba boca abajo. Pon el marcador de bonus en el <b>10</b>.')
+      '2. Cada jugador coge sus 3 cartas de acción (Correr, Saltar, Salto largo), 4 corazones y 1 ficha de vistazo.<br/>'
+      '3. Baraja el mazo de la prueba boca abajo. Pon el marcador de bonus en el <b>12</b>.')
     Hd('UNA RONDA')
     P('<b>1. El reloj corre:</b> baja el marcador de bonus 1 casilla (se queda en 0).<br/>'
       '<b>2. Elegid:</b> todos eligen en secreto una carta de acción y la dejan boca abajo. '
@@ -540,19 +540,19 @@ def reglas(c):
       '<b>3. Revelación:</b> se voltea la carta de obstáculo y todos giran su acción a la vez. '
       'Cada jugador resuelve lo que dice su carta de obstáculo para la acción elegida.')
     Hd('ACCIONES')
-    P('<b>Correr:</b> avanza 2 si está libre; contra un obstáculo, caes.<br/>'
+    P('<b>Correr:</b> avanza 4 si está libre; contra un obstáculo, caes.<br/>'
       '<b>Saltar:</b> supera obstáculos bajos y recoge bolsas.<br/>'
       '<b>Salto largo:</b> supera obstáculos largos y huecos. <b>Cansancio:</b> tras usarlo, gira la carta; '
       'esa carta no se puede jugar la ronda siguiente (se endereza al final de esa ronda).')
     Hd('CAER')
     P('Si caes, pierdes 1 corazón y no avanzas. Con 0 corazones quedas <b>eliminado de la prueba</b> '
-      '(conservas tus bolsas, pero no cobras bonus ni corazones). Todos vuelven a tener 3 corazones en la prueba siguiente.')
+      '(conservas tus bolsas, pero no cobras bonus ni corazones). Todos vuelven a tener 4 corazones en la prueba siguiente.')
     Hd('LAS CARTAS DE OBSTÁCULO')
     P('Cada carta indica lo que ocurre con cada acción. Resumen del mazo (24 cartas): '
-      '5 libres, 7 bajos, 5 largos, 4 con bolsa y 3 especiales. '
+      '10 libres, 5 bajos, 4 largos, 3 con bolsa y 2 especiales. '
       'Las bolsas valen 2 puntos: ponlas junto a tu tablero.')
     Hd('FIN DE LA PRUEBA')
-    P('Al llegar a la <b>META (casilla 19)</b> cobras de inmediato el valor que marque el bonus en ese momento '
+    P('Al llegar a la <b>META (casilla 11)</b> cobras de inmediato el valor que marque el bonus en ese momento '
       '(mínimo 1). Quien llegue en la misma ronda cobra lo mismo. Si el mazo se acaba, baraja el descarte. '
       'La prueba termina cuando todos han llegado a la meta o quedado eliminados. '
       'Además cada jugador suma <b>1 punto por corazón</b> que conserve (si llegó a meta) y 2 por cada bolsa.')
